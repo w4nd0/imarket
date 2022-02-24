@@ -1,4 +1,3 @@
-# apps/urls.py
 from .views import CartModelViewSet
 from rest_framework.routers import SimpleRouter
 
