@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from accounts.models import User
+from carts.models import Cart
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -10,6 +11,7 @@ class UserSerializer(serializers.ModelSerializer):
             "id",
             "password",
             "email",
+            "username",
             "is_superuser",
         ]
 
@@ -26,6 +28,7 @@ class UserSerializer(serializers.ModelSerializer):
         if password is not None:
             instance.set_password(password)
         instance.save()
+        Cart.objects.create(user=instance)
         return instance
 
 

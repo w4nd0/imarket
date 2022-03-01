@@ -1,13 +1,13 @@
 from django.urls import path
-from rest_framework.routers import SimpleRouter
 
-from accounts.views import CreateUserView, LoginUserView
+from accounts.views import UserView, UserDetailView, LoginUserView
 
-router = SimpleRouter()
-router.register("accounts", CreateUserView)
 
 urlpatterns = [
+    path('accounts/', UserView.as_view()),
+    path('accounts/<int:pk>/', UserDetailView.as_view()),
+
     path("login/", LoginUserView.as_view()),
 ]
 
-urlpatterns += router.urls
+# urlpatterns += router.urls
