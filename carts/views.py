@@ -6,11 +6,12 @@ from rest_framework.viewsets import GenericViewSet
 from rest_framework.exceptions import PermissionDenied
 
 from carts.serializeres import CartSerializer
+from utils.mixins import CreateListRetrieveViewSet
 
 from .models import Cart
 
 
-class CartListRetrieveView(ListModelMixin, RetrieveModelMixin, GenericViewSet):
+class CartCreateListRetrieveView(CreateListRetrieveViewSet):
     queryset = Cart.objects.all()
     serializer_class = CartSerializer
     authentication_classes = [TokenAuthentication]
