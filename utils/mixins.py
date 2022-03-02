@@ -1,11 +1,13 @@
-from rest_framework import mixins
-from rest_framework.generics import GenericAPIView
+from rest_framework.mixins import (CreateModelMixin,
+                                   ListModelMixin,
+                                   RetrieveModelMixin)
+from rest_framework.viewsets import GenericViewSet
 
 
-class RetrieveUpdateDestroyViewSet(
-    mixins.RetrieveModelMixin,
-    mixins.UpdateModelMixin,
-    mixins.DestroyModelMixin,
-    GenericAPIView
+class CreateListRetrieveViewSet(
+      CreateModelMixin,
+      ListModelMixin,
+      RetrieveModelMixin,
+      GenericViewSet
 ):
     pass
