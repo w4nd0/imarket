@@ -2,14 +2,14 @@ from django.shortcuts import get_object_or_404
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import IsAuthenticated
-from utils.mixins import CreateListRetrieveViewSet
 
 from purchases.serializeres import PurchaseSerializer
+from utils.mixins import UpdateRetrieveViewSet
 
 from .models import Purchase
 
 
-class PurchaseListCreateView(CreateListRetrieveViewSet):
+class PurchaseListCreateView(UpdateRetrieveViewSet):
     queryset = Purchase.objects.all()
     serializer_class = PurchaseSerializer
 

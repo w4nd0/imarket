@@ -4,18 +4,27 @@ from rest_framework.mixins import ListModelMixin, RetrieveModelMixin
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.exceptions import PermissionDenied
-
+from rest_framework import viewsets
 from carts.serializeres import CartSerializer
-from utils.mixins import CreateListRetrieveViewSet
+from utils.mixins import UpdateRetrieveViewSet
 
 from .models import Cart
+from rest_framework.response import Response
+from rest_framework import status
 
 
-class CartCreateListRetrieveView(CreateListRetrieveViewSet):
+class CartUpdateRetrieveView(UpdateRetrieveViewSet):
     queryset = Cart.objects.all()
     serializer_class = CartSerializer
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
+
+    # def update(self, instance, validated_data):
+    #     print(validated_data)
+
+    #     return Response(
+    #         {"msg": "ok"}, status=status.HTTP_200_OK
+    #     )
 
     def filter_queryset(self, queryset):
         user = self.request.user
@@ -37,3 +46,30 @@ class CartCreateListRetrieveView(CreateListRetrieveViewSet):
                                     to access this Cart")
 
         return object
+
+
+# class StudentViewSet(viewsets.ViewSet):
+
+#     def create(self, request):
+#         print(request)
+#         return Response(
+#             {"msg": "ok"}, status=status.HTTP_200_OK
+#         )
+
+#     def list(self, request):
+#         print(request)
+#         return Response(
+#             {"msg": "ok"}, status=status.HTTP_200_OK
+#         )
+
+#     def retrieve(self, request, pk=''):
+#         print(request)
+#         return Response(
+#             {"msg": "ok"}, status=status.HTTP_200_OK
+#         )
+
+#     def update(self, request, pk=''):
+#         print(request)
+#         return Response(
+#             {"msg": "ok"}, status=status.HTTP_200_OK
+#         )

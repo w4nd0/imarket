@@ -1,12 +1,10 @@
-from rest_framework.mixins import (CreateModelMixin,
-                                   ListModelMixin,
+from rest_framework.mixins import (UpdateModelMixin,
                                    RetrieveModelMixin)
 from rest_framework.viewsets import GenericViewSet
 
 
-class CreateListRetrieveViewSet(
-      CreateModelMixin,
-      ListModelMixin,
+class UpdateRetrieveViewSet(
+      UpdateModelMixin,
       RetrieveModelMixin,
       GenericViewSet
 ):

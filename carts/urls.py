@@ -1,14 +1,21 @@
 # from django.urls import path
 
 # from carts.views import CartDetailViewSet, CartListViewSet
-from carts.views import CartCreateListRetrieveView
+from carts.views import CartUpdateRetrieveView
 from rest_framework.routers import SimpleRouter
+from django.urls import path
 
 # urlpatterns = [
 #     path('cart/', CartListViewSet.as_view()),
 #     path('cart/<int:pk>/', CartDetailViewSet.as_view()),
 # ]
-router = SimpleRouter()
-router.register('carts', CartCreateListRetrieveView, basename='carts')
+urlpatterns = [
+    path('carts/', CartUpdateRetrieveView.as_view({'get': 'retrieve', 'patch': 'update'})),
+    # path('students/<int:pk>/', StudentViewSet.as_view({'get': 'retrieve'})),
+]
 
-urlpatterns = router.urls
+# router = SimpleRouter()
+# router.register(prefix=r'carts', viewset=CartUpdateRetrieveView)
+
+
+# urlpatterns = router.urls
