@@ -1,33 +1,58 @@
+from itertools import product
 from django.shortcuts import get_object_or_404
+from rest_framework import mixins
+from rest_framework import viewsets
 from rest_framework.authentication import TokenAuthentication
-from rest_framework.mixins import ListModelMixin, RetrieveModelMixin
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import GenericViewSet
-from rest_framework.exceptions import PermissionDenied
-from rest_framework import viewsets
-from carts.serializeres import CartSerializer
-from utils.mixins import UpdateRetrieveViewSet
 
-from .models import Cart
+from carts.models import Cart
+from carts.serializeres import CartSerializer, ViewCartSerializer
 from rest_framework.response import Response
 from rest_framework import status
 
 
-class CartUpdateRetrieveView(UpdateRetrieveViewSet):
+class UpdateCartView(mixins.UpdateModelMixin, GenericViewSet):
     queryset = Cart.objects.all()
     serializer_class = CartSerializer
+
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
-    # def update(self, instance, validated_data):
-    #     print(validated_data)
+    def get_object(self):
+        queryset = self.get_queryset()
+        obj = get_object_or_404(queryset, user_id=self.request.user.id)
+        return obj
 
-    #     return Response(
-    #         {"msg": "ok"}, status=status.HTTP_200_OK
-    #     )
+    def update(self, request):
+        serializer = self.get_serializer(data=request.data)
+        
+        # TODO Mudar o raise_exceprion
+        serializer.is_valid(raise_exception=True)
+
+        cart = self.get_object()
+        
+        products = request.data['products']
+
+        for product in products:
+            cart.products.add(product['id'])
+        
+        return Response(
+            {"msg": "ok"}, status=status.HTTP_200_OK
+        )
+
+
+class ReadCartView(viewsets.ReadOnlyModelViewSet):
+    queryset = Cart.objects.all()
+    serializer_class = ViewCartSerializer
+
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def filter_queryset(self, queryset):
         user = self.request.user
+        print('ola')
 
         if not user.is_superuser:
             queryset = queryset.filter(user=self.request.user)
@@ -46,30 +71,3 @@ class CartUpdateRetrieveView(UpdateRetrieveViewSet):
                                     to access this Cart")
 
         return object
-
-
-# class StudentViewSet(viewsets.ViewSet):
-
-#     def create(self, request):
-#         print(request)
-#         return Response(
-#             {"msg": "ok"}, status=status.HTTP_200_OK
-#         )
-
-#     def list(self, request):
-#         print(request)
-#         return Response(
-#             {"msg": "ok"}, status=status.HTTP_200_OK
-#         )
-
-#     def retrieve(self, request, pk=''):
-#         print(request)
-#         return Response(
-#             {"msg": "ok"}, status=status.HTTP_200_OK
-#         )
-
-#     def update(self, request, pk=''):
-#         print(request)
-#         return Response(
-#             {"msg": "ok"}, status=status.HTTP_200_OK
-#         )

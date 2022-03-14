@@ -1,24 +1,23 @@
 from rest_framework import serializers
-# from carts.models import Cart
-from rest_framework.response import Response
-from rest_framework import status
+from carts.models import Cart
+from products.serializeres import ProductSerializer
 
 
-class ProductSerializer(serializers.Serializer):
+class NewProductSerializer(serializers.Serializer):
     id = serializers.IntegerField()
     quantity = serializers.IntegerField()
 
 
-class CartSerializer(serializers.Serializer):
-    products = ProductSerializer(many=True, read_only=True)
+class CartSerializer(serializers.ModelSerializer):
+    products = NewProductSerializer(many=True)
 
-    def update(self, instance, validated_data):
-        print(validated_data)
+    class Meta:
+        model = Cart
+        fields = ['products']
 
-        return Response(
-            {"msg": "ok"}, status=status.HTTP_200_OK
-        )
-# class CartSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Cart
-#         fields = ["id", "total", "user"]
+class ViewCartSerializer(serializers.Serializer):
+    products = ProductSerializer(many=True)
+    total = serializers.IntegerField()
+
+
+    
