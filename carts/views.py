@@ -1,4 +1,3 @@
-from itertools import product
 from django.shortcuts import get_object_or_404
 from rest_framework import mixins
 from rest_framework import viewsets
@@ -8,6 +7,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import GenericViewSet
 
 from carts.models import Cart
+from products.models import Product
 from carts.serializeres import CartSerializer, ViewCartSerializer
 from rest_framework.response import Response
 from rest_framework import status
@@ -36,7 +36,13 @@ class UpdateCartView(mixins.UpdateModelMixin, GenericViewSet):
         products = request.data['products']
 
         for product in products:
-            cart.products.add(product['id'])
+            p = Product.objects.get(id=product['id'])
+
+            cart.products.add(p, 
+            through_defaults={'quantity': product['quantity'],
+                              'unit_price': p.price,
+                              'total_item':product['quantity'] * p.price
+                             })
         
         return Response(
             {"msg": "ok"}, status=status.HTTP_200_OK
