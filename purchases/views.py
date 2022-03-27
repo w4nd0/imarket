@@ -2,11 +2,35 @@ from django.shortcuts import get_object_or_404
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.generics import CreateAPIView
+from carts.models import Cart
 
 from purchases.serializeres import PurchaseSerializer
 from utils.mixins import UpdateRetrieveViewSet
 
 from .models import Purchase
+
+class CreatePurchaseView(CreateAPIView):
+    queryset = Purchase.objects.all()
+    serializer_class = PurchaseSerializer
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    
+    def post(self,request):
+        purchase = Purchase.objects.create(user_id=request.user.pk)
+
+        cart = get_object_or_404(Cart, user_id=request.user.pk)
+
+        items = cart.items.all()
+
+        for item in items:
+            item.purchase_id = purchase.id
+            item.save()
+        
+        return Response({'msg':'ok'}, status=status.HTTP_201_CREATED)
 
 
 class PurchaseListCreateView(UpdateRetrieveViewSet):

@@ -9,7 +9,7 @@ class Cart(models.Model):
     purchase = models.ManyToManyField("purchases.Purchase", related_name="cart", through='carts.CartProductShop')
 
 class CartProductShop(models.Model):
-    cart = models.ForeignKey(Cart, on_delete=models.PROTECT)
+    cart = models.ForeignKey(Cart, on_delete=models.PROTECT, related_name='items')
     product = models.ForeignKey('products.Product', on_delete=models.PROTECT)
     purchase = models.ForeignKey('purchases.Purchase', null=True, on_delete=models.PROTECT)
     unit_price = models.IntegerField()
