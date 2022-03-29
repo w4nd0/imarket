@@ -6,6 +6,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.generics import CreateAPIView
+from accounts.models import User
 from carts.models import Cart
 
 from purchases.serializeres import PurchaseSerializer
@@ -20,20 +21,32 @@ class CreatePurchaseView(CreateAPIView):
     permission_classes = [IsAuthenticated]
     
     def post(self,request):
+        user = get_object_or_404(User, id=request.user.pk)
+
         purchase = Purchase.objects.create(user_id=request.user.pk)
 
         cart = get_object_or_404(Cart, user_id=request.user.pk)
+
+        purchase.total = cart.total
+        purchase.save()
 
         items = cart.items.all()
 
         for item in items:
             item.purchase_id = purchase.id
             item.save()
+
+
+        cart.user_id = None
+        cart.cart_owner = user
+        cart.save()
+
+        Cart.objects.create(user_id=user.id)
         
         return Response({'msg':'ok'}, status=status.HTTP_201_CREATED)
 
 
-class PurchaseListCreateView(UpdateRetrieveViewSet):
+class PurchaseListView(UpdateRetrieveViewSet):
     queryset = Purchase.objects.all()
     serializer_class = PurchaseSerializer
 

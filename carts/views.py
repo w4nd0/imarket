@@ -38,12 +38,12 @@ class UpdateCartView(mixins.UpdateModelMixin, GenericViewSet):
         for product in products:
             p = Product.objects.get(id=product['id'])
 
-            cart.products.add(p, 
-            through_defaults={'quantity': product['quantity'],
-                              'unit_price': p.price,
-                              'total_item':product['quantity'] * p.price
-                             })
+            cart.products.add(p, through_defaults={ 'quantity': product['quantity'], 
+                                                    'unit_price': p.price})
         
+            cart.total = cart.total + product['quantity'] * p.price            
+            cart.save()
+
         return Response(
             {"msg": "ok"}, status=status.HTTP_200_OK
         )
